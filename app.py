@@ -2,6 +2,8 @@
 
 
 from flask import Flask, request
+from flask import send_file
+from reportlab.pdfgen import canvas
 import requests
 
 app = Flask(__name__)
@@ -17,6 +19,32 @@ def pedir(url):
     except:
         return {}
 
+def crear_pdf(reporte):
+
+    nombre = f"{reporte['vin']}.pdf"
+
+    c = canvas.Canvas(nombre)
+
+    y = 800
+
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(50, y, "HERTAR AUTOMOTIVE REPORT")
+
+    y -= 50
+
+    c.setFont("Helvetica", 12)
+
+    for clave, valor in reporte.items():
+
+        if clave != "fotos":
+
+            c.drawString(50, y, f"{clave}: {valor}")
+
+            y -= 25
+
+    c.save()
+
+    return nombre
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -254,6 +282,11 @@ def mostrar_reporte(r):
                 Abrir subasta
             </a>
         </p>
+        <br><br>
+
+<a href="/pdf/{r['vin']}" target="_blank">
+    <button>Descargar PDF</button>
+</a>
 
     </div>
 
@@ -266,7 +299,20 @@ def mostrar_reporte(r):
     </div>
 
     """
+@app.route("/pdf/<vin>")
+def pdf(vin):
 
+    reporte = {
+        "vin": vin,
+        "estado": "Reporte generado",
+    }
+
+    archivo = crear_pdf(reporte)
+
+    return send_file(
+        archivo,
+        as_attachment=True
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
