@@ -10,9 +10,9 @@ except Exception:
 
 app = Flask(__name__)
 
-MARKETCHECK_API_KEY = os.getenv("MARKETCHECK_API_KEY", "PON_AQUI_TU_MARKETCHECK_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "PON_AQUI_TU_OPENAI_KEY")
-client = OpenAI(api_key=OPENAI_API_KEY)
+MARKETCHECK_API_KEY = os.getenv("MARKETCHECK_API_KEY", "2TCIi74NzmAfNDwdccW9Hy2ihmgFxooa")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "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")
+
 
 def api_get(url):
     try:
