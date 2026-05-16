@@ -10,8 +10,10 @@ except Exception:
 
 app = Flask(__name__)
 
-MARKETCHECK_API_KEY = os.getenv("MARKETCHECK_API_KEY", "2TCIi74NzmAfNDwdccW9Hy2ihmgFxooa")
+MARKETCHECK_API_KEY = os.getenv("MARKETCHECK_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 def api_get(url):
     try:
