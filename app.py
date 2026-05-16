@@ -367,5 +367,15 @@ def debug_auction(query):
     lot = extract_lot(query)
     return {"lot": lot, "marketcheck": consultar_lote_exacto_marketcheck(lot), "copart_direct": consultar_copart_directo_por_lote(lot)}
 
+
+@app.route("/env-test")
+def env_test():
+    return {
+        "marketcheck_exists": bool(MARKETCHECK_API_KEY),
+        "marketcheck_first_chars": MARKETCHECK_API_KEY[:6] if MARKETCHECK_API_KEY else "NONE",
+        "openai_exists": bool(OPENAI_API_KEY)
+    }
+
+
 if __name__ == "__main__":
     app.run(debug=True)
