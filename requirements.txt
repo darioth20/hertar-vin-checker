@@ -2,7 +2,4 @@ flask
 requests
 python-dotenv
 playwright
-openai
 gunicorn
-pdfplumber
-pymupdf

@@ -2,47 +2,45 @@ import os
 import requests
 
 
-def num(v):
+def money_to_number(value):
     try:
-        return int(float(str(v).replace('$','').replace(',','').strip()))
+        return int(float(str(value).replace('$', '').replace(',', '').strip()))
     except Exception:
         return 0
 
 
-def buscar_marketcheck(vin, carfax=None):
-    api_key = os.getenv('MARKETCHECK_API_KEY')
-    carfax = carfax or {}
-    fallback_value = num(carfax.get('carfax_value'))
-    fallback_miles = carfax.get('miles', 'No encontrado')
+def buscar_marketcheck(vin):
+    key = os.getenv("MARKETCHECK_API_KEY", "")
 
-    base = {
-        'market_value': fallback_value,
-        'colorado_average': fallback_value,
-        'transmission': 'No encontrado',
-        'drivetrain': carfax.get('drive_type', 'No encontrado'),
-        'engine': carfax.get('engine', 'No encontrado'),
-        'miles': fallback_miles,
-        'accidents': carfax.get('accidents', 'No encontrado'),
-        'error': ''
+    # Fallback base. La app no se rompe si no hay API key o si MarketCheck falla.
+    fallback = {
+        "market_value": 0,
+        "colorado_average": 0,
+        "transmission": "No encontrado",
+        "drivetrain": "No encontrado",
+        "engine": "No encontrado",
+        "miles": "No encontrado",
+        "accidents": "No encontrado",
     }
 
-    if not api_key:
-        base['error'] = 'MARKETCHECK_API_KEY no configurado; usando CARFAX fallback.'
-        return base
+    if not key:
+        return fallback
 
     try:
-        url = f'https://api.marketcheck.com/v2/decode/car/{vin}/specs'
-        r = requests.get(url, params={'api_key': api_key}, timeout=12)
+        url = f"https://api.marketcheck.com/v2/decode/car/{vin}/specs"
+        r = requests.get(url, params={"api_key": key}, timeout=20)
         if r.status_code != 200:
-            base['error'] = f'MarketCheck status {r.status_code}; usando fallback.'
-            return base
+            return fallback
         data = r.json()
-        build = data.get('build', data)
-        base['transmission'] = build.get('transmission') or build.get('transmission_type') or base['transmission']
-        base['drivetrain'] = build.get('drivetrain') or base['drivetrain']
-        engine = build.get('engine') or build.get('engine_size') or base['engine']
-        base['engine'] = str(engine)
-        return base
-    except Exception as e:
-        base['error'] = str(e)
-        return base
+        build = data.get("build", {}) or data.get("specs", {}) or data
+        return {
+            "market_value": money_to_number(data.get("price") or data.get("market_value") or 0),
+            "colorado_average": money_to_number(data.get("price") or data.get("market_value") or 0),
+            "transmission": build.get("transmission") or build.get("transmission_name") or "Automatic",
+            "drivetrain": build.get("drivetrain") or build.get("drive_type") or "No encontrado",
+            "engine": build.get("engine") or build.get("engine_description") or "No encontrado",
+            "miles": data.get("miles") or "No encontrado",
+            "accidents": data.get("accidents") or "No encontrado",
+        }
+    except Exception:
+        return fallback
