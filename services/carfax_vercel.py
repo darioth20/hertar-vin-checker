@@ -36,9 +36,13 @@ def extraer_carfax_vercel(vin):
         return {'vin': vin, 'error':'Faltan credenciales','detalle':'Agrega VERCEL_EMAIL y VERCEL_PASSWORD en .env'}
     request_id=None; texto_reporte=''
     with sync_playwright() as p:
-        browser=p.chromium.launch(
-        headless=True,       
-        args=["--no-sandbox", "--disable-dev-shm-usage"]
+        browser = p.chromium.launch(
+    channel="chromium",
+    headless=True,
+    args=[
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+    ]
 )
         context=browser.new_context()
         page=context.new_page()
