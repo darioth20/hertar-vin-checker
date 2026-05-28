@@ -1,0 +1,47 @@
+:root{
+    --bg:#0c0f14;
+    --card:#151a22;
+    --card2:#10151d;
+    --line:#273142;
+    --text:#eef3fb;
+    --muted:#95a2b8;
+    --blue:#30a8ff;
+    --green:#2ee59d;
+    --orange:#ffb74a;
+    --red:#ff6363;
+}
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Inter,Arial,Helvetica,sans-serif;
+    background:radial-gradient(circle at top,#162236 0,#0c0f14 42%,#080a0e 100%);
+    color:var(--text);
+}
+a{color:inherit}
+.home-wrap{min-height:100vh;display:grid;place-items:center;padding:28px}
+.hero-card{
+    width:min(780px,100%);
+    padding:42px;
+    border:1px solid var(--line);
+    border-radius:28px;
+    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
+}
+.badge{display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(48,168,255,.12);color:var(--blue);font-weight:800;font-size:12px;letter-spacing:.08em}
+h1{font-size:46px;margin:18px 0 8px}
+p{color:var(--muted);line-height:1.55}
+.vin-form{display:flex;gap:12px;margin-top:28px}
+.vin-form input{flex:1;background:#0d1118;color:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;font-size:16px;text-transform:uppercase}
+button,.ghost,.pdf-btn{border:0;border-radius:16px;padding:14px 18px;background:var(--blue);color:#00111f;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.ghost{background:#111824;color:#dbe8ff;border:1px solid var(--line)}
+.topbar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:18px 28px;background:rgba(8,10,14,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{font-weight:900;letter-spacing:.06em}.subtitle{color:var(--muted);font-size:13px;margin-top:4px}
+.report-wrap{max-width:1180px;margin:0 auto;padding:28px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+.metric,.card{border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));box-shadow:0 18px 50px rgba(0,0,0,.22)}
+.metric{padding:20px}.metric span{display:block;color:var(--muted);font-size:13px}.metric strong{display:block;font-size:28px;margin-top:8px}.metric.blue strong{color:var(--blue)}.metric.green strong{color:var(--green)}.metric.orange strong{color:var(--orange)}
+.card{padding:24px;margin-bottom:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px}h2{margin:0 0 18px;font-size:22px}.pdf-btn{background:rgba(48,168,255,.16);color:#bfe3ff;border:1px solid rgba(48,168,255,.35)}
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.item{background:var(--card2);border:1px dashed #334057;border-radius:16px;padding:14px;min-height:74px}.item span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}.item b{display:block;margin-top:8px;font-size:16px;word-break:break-word}
+.calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.calc-grid label{color:var(--muted);font-size:13px}.calc-grid input{width:100%;margin-top:8px;background:#0d1118;border:1px solid var(--line);border-radius:14px;color:#fff;padding:14px;font-size:18px}.profit-box{margin-top:18px;padding:20px;border-radius:18px;background:linear-gradient(90deg,rgba(46,229,157,.18),rgba(48,168,255,.12));border:1px solid rgba(46,229,157,.25);display:flex;justify-content:space-between;align-items:center}.profit-box span{color:#c7ffe8}.profit-box strong{font-size:34px;color:var(--green)}
+.advice-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.advice-row div{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:16px}.advice-row span{display:block;color:var(--muted);font-size:12px}.advice-row b{display:block;margin-top:8px;font-size:18px}.reason{background:#0d1118;border-left:4px solid var(--orange);padding:16px;border-radius:12px;color:#dfe7f5}
+@media(max-width:900px){.summary-grid,.info-grid{grid-template-columns:repeat(2,1fr)}.calc-grid,.advice-row{grid-template-columns:1fr}.vin-form{flex-direction:column}.topbar{position:relative}.report-wrap{padding:16px}}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><title>HERTAR AUTOMOTIVE REPORT</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef1f5;color:#010b1f;font-family:Arial,Helvetica,sans-serif}.top{background:#0f1828;padding:18px 90px}.top form{display:flex;gap:10px;max-width:850px;margin:auto}.top input{flex:1;padding:16px;border-radius:10px;border:0;font-size:16px}.top button{background:#2563eb;color:white;border:0;border-radius:10px;padding:0 28px;font-weight:800}.wrap{max-width:1430px;margin:24px auto;display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.card{background:white;border-radius:18px;padding:18px;box-shadow:0 12px 32px rgba(0,0,0,.08);margin-bottom:18px}.vehicle{min-height:195px}.title{font-size:29px;font-weight:900;margin:8px 0}.sub{color:#40577a;margin:4px 0}.risk{display:inline-block;margin-top:12px;background:#d7f8df;color:#006329;border-radius:20px;padding:8px 12px;font-weight:900}.section-title{font-size:18px;font-weight:900;border-bottom:1px solid #d9dee8;padding-bottom:10px;margin-bottom:14px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.box{background:#f7f9fb;border:1px solid #dce2eb;border-radius:12px;padding:13px;min-height:68px}.label{font-size:12px;text-transform:uppercase;color:#4b6385;font-weight:800;margin-bottom:8px}.value{font-size:19px;font-weight:900;word-break:break-word}.money{font-size:30px;color:#006b43}.blue{color:#005fb8}.orange{color:#d68000}.darkai{background:#0e182c;color:white;border-radius:14px;padding:20px;line-height:1.55;max-height:290px;overflow:auto}.pdf{display:inline-block;background:#0f1828;color:white;text-decoration:none;border-radius:10px;padding:12px 18px;font-weight:900;margin-top:14px}.alert ul{margin-left:20px;line-height:1.7}.calc{grid-template-columns:repeat(2,1fr)}.calc input{width:100%;border:0;background:transparent;font-size:20px;font-weight:900;outline:none}.photo{width:16px;height:16px;border-radius:8px}.bottomgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:950px){.wrap{grid-template-columns:1fr;margin:18px}.top{padding:18px}.grid4{grid-template-columns:1fr 1fr}}
+</style></head>
+<body>
+<div class="top"><form action="/search" method="post"><input name="q" placeholder="Pega VIN, lote o link Copart"><button>Buscar</button></form></div>
+<div class="wrap">
+  <div>
+    <div class="card vehicle"><img class="photo" src=""><div class="title">{{ vehicle.debug.nhtsa.year }} {{ vehicle.debug.nhtsa.make }} {{ vehicle.debug.nhtsa.model }}</div><div class="sub">VIN: {{ vehicle.vin }}</div><div class="sub">Lote: No encontrado</div><div class="risk">RIESGO: {{ vehicle.financial.risk }}</div>{% if vehicle.carfax.pdf_url and vehicle.carfax.pdf_url != 'No encontrado' %}<br><a class="pdf" href="{{ vehicle.carfax.pdf_url }}" target="_blank">VIEW CARFAX PDF</a>{% endif %}</div>
+    <div class="card"><div class="section-title">Datos CARFAX / Vercel</div><div class="grid">
+      <div class="box"><div class="label">Millas</div><div class="value">{{ vehicle.carfax.miles }}</div></div><div class="box"><div class="label">CARFAX Value</div><div class="value">${{ "{:,}".format(vehicle.carfax.carfax_value) }}</div></div>
+      <div class="box"><div class="label">Retail</div><div class="value">${{ "{:,}".format(vehicle.carfax.retail_value) }}</div></div><div class="box"><div class="label">Wholesale</div><div class="value">${{ "{:,}".format(vehicle.carfax.wholesale_value) }}</div></div>
+      <div class="box"><div class="label">Accidents</div><div class="value">{{ vehicle.carfax.accidents }}</div></div><div class="box"><div class="label">Title Type</div><div class="value">{{ vehicle.carfax.title }}</div></div>
+      <div class="box"><div class="label">Owners</div><div class="value">{{ vehicle.carfax.owners }}</div></div><div class="box"><div class="label">Service Records</div><div class="value">{{ vehicle.carfax.service_records }}</div></div>
+    </div></div>
+    <div class="card"><div class="section-title">Datos MarketCheck + NHTSA</div><div class="grid">
+      <div class="box"><div class="label">Motor</div><div class="value">{{ vehicle.marketcheck.engine }}</div></div><div class="box"><div class="label">Transmisión VIN</div><div class="value">{{ vehicle.marketcheck.transmission }}</div></div>
+      <div class="box"><div class="label">Drivetrain</div><div class="value">{{ vehicle.marketcheck.drivetrain }}</div></div><div class="box"><div class="label">Body</div><div class="value">{{ vehicle.marketcheck.body or vehicle.carfax.body }}</div></div>
+      <div class="box"><div class="label">Valor mercado Colorado</div><div class="value">${{ "{:,}".format(vehicle.marketcheck.market_value) }}</div></div><div class="box"><div class="label">Promedio Colorado</div><div class="value">${{ "{:,}".format(vehicle.marketcheck.colorado_average) }}</div></div>
+    </div></div>
+    <div class="card"><div class="section-title">Datos de subasta</div><div class="grid"><div class="box"><div class="label">Fuente</div><div class="value">No encontrado</div></div><div class="box"><div class="label">Título</div><div class="value">{{ vehicle.carfax.title }}</div></div><div class="box"><div class="label">Daño principal</div><div class="value">No encontrado</div></div><div class="box"><div class="label">Run & Drive</div><div class="value">No confirmado</div></div></div></div>
+  </div>
+  <div>
+    <div class="card"><div class="section-title">Resultado financiero</div><div class="grid calc">
+      <div class="box"><div class="label">Valor por título</div><div class="value money">${{ "{:,}".format(vehicle.financial.title_value) }}</div></div><div class="box"><div class="label">Oferta máxima</div><div class="value">${{ "{:,}".format(vehicle.financial.max_bid) }}</div></div>
+      <div class="box"><div class="label">Precio subasta</div><input id="pay" type="number" value="{{ vehicle.financial.max_bid }}"></div><div class="box"><div class="label">Fees</div><input id="fees" type="number" value="1200"></div>
+      <div class="box"><div class="label">Reparación</div><input id="repairs" type="number" value="{{ vehicle.financial.estimated_repair }}"></div><div class="box"><div class="label">Ganancia potencial</div><div class="value money" id="profit">$0</div></div>
+    </div></div>
+    <div class="card alert"><div class="section-title">Alertas</div><ul><li>No está confirmado como Run & Drive.</li>{% if vehicle.carfax.accidents != '0' and vehicle.carfax.accidents != 'No encontrado' %}<li>Historial de accidente/daño detectado.</li>{% endif %}{% if vehicle.carfax.title != 'No encontrado' %}<li>Título: {{ vehicle.carfax.title }}.</li>{% endif %}</ul></div>
+    <div class="card"><div class="section-title">Consejo IA</div><div class="darkai"><b>OPINIÓN IA COMO COMPRADOR:</b><br>{{ vehicle.financial.ai_reason }}</div></div>
+  </div>
+</div>
+<script>function num(id){return parseFloat(document.getElementById(id).value)||0}function calc(){const market={{ vehicle.marketcheck.market_value or 0 }};const profit=market-num('pay')-num('fees')-num('repairs');document.getElementById('profit').innerText='$'+profit.toLocaleString()}document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));calc();</script>
+</body></html>
