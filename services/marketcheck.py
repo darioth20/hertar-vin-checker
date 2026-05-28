@@ -1,46 +1,51 @@
-import os
-import requests
-
-
-def money_to_number(value):
-    try:
-        return int(float(str(value).replace('$', '').replace(',', '').strip()))
-    except Exception:
-        return 0
-
+import os, requests
+from .utils import money_to_number
 
 def buscar_marketcheck(vin):
-    key = os.getenv("MARKETCHECK_API_KEY", "")
-
-    # Fallback base. La app no se rompe si no hay API key o si MarketCheck falla.
-    fallback = {
-        "market_value": 0,
-        "colorado_average": 0,
-        "transmission": "No encontrado",
-        "drivetrain": "No encontrado",
-        "engine": "No encontrado",
-        "miles": "No encontrado",
-        "accidents": "No encontrado",
-    }
-
-    if not key:
-        return fallback
-
-    try:
-        url = f"https://api.marketcheck.com/v2/decode/car/{vin}/specs"
-        r = requests.get(url, params={"api_key": key}, timeout=20)
-        if r.status_code != 200:
-            return fallback
-        data = r.json()
-        build = data.get("build", {}) or data.get("specs", {}) or data
+    api_key = os.getenv('MARKETCHECK_API_KEY')
+    if not api_key:
         return {
-            "market_value": money_to_number(data.get("price") or data.get("market_value") or 0),
-            "colorado_average": money_to_number(data.get("price") or data.get("market_value") or 0),
-            "transmission": build.get("transmission") or build.get("transmission_name") or "Automatic",
-            "drivetrain": build.get("drivetrain") or build.get("drive_type") or "No encontrado",
-            "engine": build.get("engine") or build.get("engine_description") or "No encontrado",
-            "miles": data.get("miles") or "No encontrado",
-            "accidents": data.get("accidents") or "No encontrado",
+            'market_value': 0, 'colorado_average': 0, 'miles': 'No encontrado',
+            'accidents': 'No encontrado', 'transmission': 'No encontrado',
+            'drivetrain': 'No encontrado', 'engine': 'No encontrado', 'body': 'No encontrado',
+            'error': 'MARKETCHECK_API_KEY no configurada'
         }
-    except Exception:
-        return fallback
+    try:
+        specs_url = f"https://api.marketcheck.com/v2/decode/car/{vin}/specs?api_key={api_key}"
+        specs = requests.get(specs_url, timeout=20).json()
+        engine = specs.get('engine') or specs.get('engine_description') or 'No encontrado'
+        drivetrain = specs.get('drivetrain') or 'No encontrado'
+        transmission = specs.get('transmission') or 'No encontrado'
+        body = specs.get('body_type') or specs.get('body') or 'No encontrado'
+        year = specs.get('year')
+        make = specs.get('make')
+        model = specs.get('model')
+
+        market_value = 0
+        colorado_average = 0
+        if year and make and model:
+            search_url = 'https://api.marketcheck.com/v2/search/car/active'
+            params = {'api_key': api_key, 'year': year, 'make': make, 'model': model, 'state': 'CO', 'rows': 50}
+            data = requests.get(search_url, params=params, timeout=20).json()
+            prices = [money_to_number(x.get('price')) for x in data.get('listings', []) if money_to_number(x.get('price')) > 0]
+            if prices:
+                colorado_average = int(sum(prices)/len(prices))
+                market_value = colorado_average
+        return {
+            'market_value': market_value,
+            'colorado_average': colorado_average,
+            'miles': 'No encontrado',
+            'accidents': 'No encontrado',
+            'transmission': transmission,
+            'drivetrain': drivetrain,
+            'engine': engine,
+            'body': body,
+            'error': ''
+        }
+    except Exception as e:
+        return {
+            'market_value': 0, 'colorado_average': 0, 'miles': 'No encontrado',
+            'accidents': 'No encontrado', 'transmission': 'No encontrado',
+            'drivetrain': 'No encontrado', 'engine': 'No encontrado', 'body': 'No encontrado',
+            'error': str(e)
+        }
