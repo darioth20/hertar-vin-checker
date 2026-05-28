@@ -65,7 +65,10 @@ def extraer_carfax_vercel(vin):
         for _ in range(30):
             if request_id: break
             page.wait_for_timeout(1000)
-        page.wait_for_timeout(25000)
+        try:
+            page.wait_for_selector("text=Open PDF", timeout=60000)
+        except:
+            pass
         for p2 in context.pages:
             try:
                 print('PAGE:', p2.url)
