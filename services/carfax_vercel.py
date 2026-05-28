@@ -36,7 +36,14 @@ def extraer_carfax_vercel(vin):
         return {'vin': vin, 'error':'Faltan credenciales','detalle':'Agrega VERCEL_EMAIL y VERCEL_PASSWORD en .env'}
     request_id=None; texto_reporte=''
     with sync_playwright() as p:
-        browser=p.chromium.launch(headless=False, slow_mo=350)
+        browser = p.chromium.launch(
+    channel="chromium",
+    headless=True,
+    args=[
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+    ]
+)
         context=browser.new_context()
         page=context.new_page()
         def cap(response):
@@ -58,7 +65,10 @@ def extraer_carfax_vercel(vin):
         for _ in range(30):
             if request_id: break
             page.wait_for_timeout(1000)
-        page.wait_for_timeout(25000)
+        try:
+            page.wait_for_selector("text=Open PDF", timeout=60000)
+        except:
+            pass
         for p2 in context.pages:
             try:
                 print('PAGE:', p2.url)
