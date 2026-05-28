@@ -37,9 +37,8 @@ def extraer_carfax_vercel(vin):
     request_id=None; texto_reporte=''
     with sync_playwright() as p:
         browser=p.chromium.launch(
-    headless=True,
-    slow_mo=350,
-    args=["--no-sandbox", "--disable-dev-shm-usage"]
+        headless=True,       
+        args=["--no-sandbox", "--disable-dev-shm-usage"]
 )
         context=browser.new_context()
         page=context.new_page()
